@@ -1,4 +1,11 @@
 package ua.blackwind.data
 
-class CatFactsRepository {
+import android.content.Context
+import ua.blackwind.data.db.CatFactsDatabase
+import javax.inject.Inject
+
+class CatFactsRepository @Inject constructor(
+    private val context: Context,
+    private val db: CatFactsDatabase
+) {
 }
