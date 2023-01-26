@@ -6,6 +6,9 @@ import javax.inject.Inject
 
 class CatFactsRepository @Inject constructor(
     private val context: Context,
-    private val db: CatFactsDatabase
+    db: CatFactsDatabase
 ) {
+    private val dao = db.dao
+
+
 }
