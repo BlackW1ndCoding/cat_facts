@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "facts_random")
 data class RandomCatFactDbModel(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int?,
     val text: String
 )

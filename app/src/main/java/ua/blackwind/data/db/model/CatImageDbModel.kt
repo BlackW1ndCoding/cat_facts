@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "cat_image")
 data class CatImageDbModel(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int?,
     val url: String
 )

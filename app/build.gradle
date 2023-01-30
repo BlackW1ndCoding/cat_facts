@@ -60,6 +60,7 @@ dependencies {
     //Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     implementation 'androidx.core:core-ktx:+'
+    implementation 'androidx.core:core-ktx:+'
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     //Room
