@@ -7,6 +7,6 @@ import ua.blackwind.data.db.model.RandomCatFactDbModel
 interface ICatFactsRepository {
     fun getAllRandomCatFacts(): Flow<List<RandomCatFactDbModel>>
     fun getAllFavoriteCatFacts(): Flow<List<FavoriteCatFactDBModel>>
-    fun deleteRandomCatFactById(id: Int)
-    fun deleteFavoriteCatFactById(id: Int)
+    suspend fun deleteRandomCatFactById(id: Int?)
+    suspend fun deleteFavoriteCatFactById(id: Int?)
 }

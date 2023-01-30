@@ -24,13 +24,13 @@ interface CatFactsDao {
     suspend fun insertCatImage(catImage: CatImageDbModel)
 
     @Query("DELETE FROM facts_random WHERE id == :id")
-    suspend fun deleteRandomCatFactById(id: Int)
+    suspend fun deleteRandomCatFactById(id: Int?)
 
     @Query("DELETE FROM facts_favorite WHERE id == :id")
-    suspend fun deleteFavoriteCatFactById(id: Int)
+    suspend fun deleteFavoriteCatFactById(id: Int?)
 
     @Query("DELETE FROM cat_image WHERE id == :id")
-    suspend fun deleteCatImageById(id: Int)
+    suspend fun deleteCatImageById(id: Int?)
 
     @Query("SELECT * FROM facts_random ORDER BY id DESC")
     fun getAllRandomCatFacts(): Flow<List<RandomCatFactDbModel>>

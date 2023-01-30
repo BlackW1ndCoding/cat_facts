@@ -9,13 +9,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.json.JSONArray
-import ua.blackwind.data.api.CatFactJSON
-import ua.blackwind.data.api.CatFactStatusJSON
 import ua.blackwind.data.api.CatFactsListJSON
 import ua.blackwind.data.db.CatFactsDatabase
 import ua.blackwind.data.db.model.FavoriteCatFactDBModel
 import ua.blackwind.data.db.model.RandomCatFactDbModel
-import java.util.Locale.filter
 import javax.inject.Inject
 
 class CatFactsRepository @Inject constructor(
@@ -25,20 +22,18 @@ class CatFactsRepository @Inject constructor(
     private val moshi: Moshi
 ): ICatFactsRepository {
     private val dao = db.dao
-    override fun getAllRandomCatFacts(): Flow<List<RandomCatFactDbModel>> {
-        TODO("Not yet implemented")
+    override fun getAllRandomCatFacts(): Flow<List<RandomCatFactDbModel>> =
+        dao.getAllRandomCatFacts()
+
+    override fun getAllFavoriteCatFacts(): Flow<List<FavoriteCatFactDBModel>> =
+        dao.getAllFavoriteCatFacts()
+
+    override suspend fun deleteRandomCatFactById(id: Int?) {
+        dao.deleteRandomCatFactById(id)
     }
 
-    override fun getAllFavoriteCatFacts(): Flow<List<FavoriteCatFactDBModel>> {
-        TODO("Not yet implemented")
-    }
-
-    override fun deleteRandomCatFactById(id: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun deleteFavoriteCatFactById(id: Int) {
-        TODO("Not yet implemented")
+    override suspend fun deleteFavoriteCatFactById(id: Int?) {
+        dao.deleteRandomCatFactById(id)
     }
 
     fun fetchNewRandomCatFacts() {
