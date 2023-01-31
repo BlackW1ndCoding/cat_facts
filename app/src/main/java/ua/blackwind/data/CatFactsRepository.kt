@@ -1,7 +1,5 @@
 package ua.blackwind.data
 
-import android.util.Log
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import kotlinx.coroutines.Dispatchers
@@ -10,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import ua.blackwind.data.api.CatFactJSON
-import ua.blackwind.data.api.CatFactsListJSON
 import ua.blackwind.data.db.CatFactsDatabase
 import ua.blackwind.data.db.model.FavoriteCatFactDBModel
 import ua.blackwind.data.db.model.RandomCatFactDbModel
@@ -55,16 +52,20 @@ class CatFactsRepository @Inject constructor(
     @OptIn(ExperimentalStdlibApi::class)
     private fun loadRandomFactsIntoDb(json: JSONArray) {
         val adapter = moshi.adapter<List<CatFactJSON>>()
-        adapter.fromJson(json.toString())?.let { jsonList ->
-            jsonList.filter { it.status.verified ?: false }
-                .map { catFactJSON -> catFactJSON.mapToDbModel() }
-        }?.let {
-            GlobalScope.launch(Dispatchers.IO) { dao.insertRandomCatFactsList(it) }
+        try {
+            adapter.fromJson(json.toString())?.let { jsonList ->
+                jsonList.filter { it.status.verified ?: false }
+                    .map { catFactJSON -> catFactJSON.mapToDbModel() }
+            }?.let {
+                GlobalScope.launch(Dispatchers.IO) { dao.insertRandomCatFactsList(it) }
+            }
+        } catch (exception: Exception) {
+            fetchNewRandomCatFacts()
         }
     }
 
-    private fun handleApiErrors(exception: java.lang.Exception) {
-        Log.d("JSON_Error", exception.message ?: "Unknown Error")
+    private fun handleApiErrors(exception: Exception) {
+       //TODO implement error message channel to inform user about request failures when db is empty
     }
 
     private fun checkDbRandomCatFactsCount() = dao.getRandomFactsCount()

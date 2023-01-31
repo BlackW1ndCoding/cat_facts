@@ -40,4 +40,5 @@ object Singleton {
     ): ICatFactsRepository {
         return CatFactsRepository(CatFactsRemoteDataSource(context), database, moshi)
     }
+
 }
