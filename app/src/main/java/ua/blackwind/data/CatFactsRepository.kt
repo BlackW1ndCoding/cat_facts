@@ -1,14 +1,15 @@
 package ua.blackwind.data
 
-import android.content.Context
 import android.util.Log
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.json.JSONArray
+import ua.blackwind.data.api.CatFactJSON
 import ua.blackwind.data.api.CatFactsListJSON
 import ua.blackwind.data.db.CatFactsDatabase
 import ua.blackwind.data.db.model.FavoriteCatFactDBModel
@@ -16,7 +17,6 @@ import ua.blackwind.data.db.model.RandomCatFactDbModel
 import javax.inject.Inject
 
 class CatFactsRepository @Inject constructor(
-    private val context: Context,
     private val catFactsRemoteDataSource: CatFactsRemoteDataSource,
     db: CatFactsDatabase,
     private val moshi: Moshi
@@ -47,15 +47,16 @@ class CatFactsRepository @Inject constructor(
 
         catFactsRemoteDataSource.loadNewCatFacts(
             factsRequestCount,
-            ::loadFactsIntoDb,
+            ::loadRandomFactsIntoDb,
             ::handleApiErrors
         )
     }
 
-    private fun loadFactsIntoDb(json: JSONArray) {
-        val adapter: JsonAdapter<CatFactsListJSON> = moshi.adapter(CatFactsListJSON::class.java)
-        adapter.fromJsonValue(json)?.let { jsonList ->
-            jsonList.list.filter { it.status.verified ?: false }
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun loadRandomFactsIntoDb(json: JSONArray) {
+        val adapter = moshi.adapter<List<CatFactJSON>>()
+        adapter.fromJson(json.toString())?.let { jsonList ->
+            jsonList.filter { it.status.verified ?: false }
                 .map { catFactJSON -> catFactJSON.mapToDbModel() }
         }?.let {
             GlobalScope.launch(Dispatchers.IO) { dao.insertRandomCatFactsList(it) }
