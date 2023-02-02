@@ -11,7 +11,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import ua.blackwind.data.cat_facts.CatFactsFactsRemoteDataSource
+import ua.blackwind.data.cat_facts.CatFactsRemoteDataSource
 import ua.blackwind.data.cat_facts.CatFactsRepository
 import ua.blackwind.data.cat_facts.ICatFactsRemoteDataSource
 import ua.blackwind.data.cat_facts.ICatFactsRepository
@@ -40,7 +40,7 @@ object Singleton {
 
     @Provides
     fun provideCatFactsRemoteDataSource(requestQueue: RequestQueue): ICatFactsRemoteDataSource {
-        return CatFactsFactsRemoteDataSource(requestQueue)
+        return CatFactsRemoteDataSource(requestQueue)
     }
 
     @Provides

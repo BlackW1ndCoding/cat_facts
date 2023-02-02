@@ -6,7 +6,7 @@ import com.android.volley.toolbox.JsonArrayRequest
 import org.json.JSONArray
 import javax.inject.Inject
 
-class CatFactsFactsRemoteDataSource @Inject constructor(
+class CatFactsRemoteDataSource @Inject constructor(
     private val requestQueue: RequestQueue
 ): ICatFactsRemoteDataSource {
 
