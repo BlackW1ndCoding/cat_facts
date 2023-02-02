@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class CatImagesRepository @Inject constructor(
     db: CatFactsDatabase
-): ICatImageRepository {
+): ICatImagesRepository {
     override fun getAllCatImagesList(): Flow<List<CatImageDbModel>> {
         TODO("Not yet implemented")
     }
