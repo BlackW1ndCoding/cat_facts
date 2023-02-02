@@ -1,4 +1,4 @@
-package ua.blackwind.data
+package ua.blackwind.data.cat_facts
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
@@ -11,10 +11,11 @@ import ua.blackwind.data.api.CatFactJSON
 import ua.blackwind.data.db.CatFactsDatabase
 import ua.blackwind.data.db.model.FavoriteCatFactDBModel
 import ua.blackwind.data.db.model.RandomCatFactDbModel
+import ua.blackwind.data.mapToDbModel
 import javax.inject.Inject
 
 class CatFactsRepository @Inject constructor(
-    private val catFactsRemoteDataSource: CatFactsRemoteDataSource,
+    private val catFactsRemoteDataSource: ICatFactsRemoteDataSource,
     db: CatFactsDatabase,
     private val moshi: Moshi
 ): ICatFactsRepository {

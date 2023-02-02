@@ -1,19 +1,16 @@
-package ua.blackwind.data
+package ua.blackwind.data.cat_facts
 
-import android.content.Context
 import com.android.volley.Request.Method
+import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.Volley
-import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONArray
 import javax.inject.Inject
 
-class CatFactsRemoteDataSource @Inject constructor(
-    @ApplicationContext private val context: Context
-) {
-    private val requestQueue = Volley.newRequestQueue(context)
+class CatFactsFactsRemoteDataSource @Inject constructor(
+    private val requestQueue: RequestQueue
+): ICatFactsRemoteDataSource {
 
-    fun loadNewCatFacts(
+    override fun loadNewCatFacts(
         factsRequestCount: Int,
         successCallback: (JSONArray) -> Unit,
         errorCallback: (Exception) -> Unit

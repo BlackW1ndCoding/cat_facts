@@ -1,4 +1,4 @@
-package ua.blackwind.data
+package ua.blackwind.data.cat_facts
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -26,7 +26,7 @@ internal class CatFactsRepositoryTest {
         RandomCatFactDbModel(null, "TEST TEXT FIVE")
     )
 
-    private lateinit var remoteDataSource: CatFactsRemoteDataSource
+    private lateinit var remoteDataSource: CatFactsFactsRemoteDataSource
     private lateinit var db: CatFactsDatabase
     private lateinit var dao: CatFactsDao
 

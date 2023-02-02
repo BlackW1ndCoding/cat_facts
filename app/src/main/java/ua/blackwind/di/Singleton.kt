@@ -2,6 +2,8 @@ package ua.blackwind.di
 
 import android.content.Context
 import androidx.room.Room
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.Volley
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -9,9 +11,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import ua.blackwind.data.CatFactsRemoteDataSource
-import ua.blackwind.data.CatFactsRepository
-import ua.blackwind.data.ICatFactsRepository
+import ua.blackwind.data.cat_facts.CatFactsFactsRemoteDataSource
+import ua.blackwind.data.cat_facts.CatFactsRepository
+import ua.blackwind.data.cat_facts.ICatFactsRemoteDataSource
+import ua.blackwind.data.cat_facts.ICatFactsRepository
 import ua.blackwind.data.db.CatFactsDatabase
 
 @Module
@@ -33,12 +36,19 @@ object Singleton {
     }
 
     @Provides
+    fun provideRequestQueue(@ApplicationContext context: Context) = Volley.newRequestQueue(context)
+
+    @Provides
+    fun provideCatFactsRemoteDataSource(requestQueue: RequestQueue): ICatFactsRemoteDataSource {
+        return CatFactsFactsRemoteDataSource(requestQueue)
+    }
+
+    @Provides
     fun provideCatFactsRepository(
-        @ApplicationContext context: Context,
+        remoteDataSource: ICatFactsRemoteDataSource,
         database: CatFactsDatabase,
         moshi: Moshi
     ): ICatFactsRepository {
-        return CatFactsRepository(CatFactsRemoteDataSource(context), database, moshi)
+        return CatFactsRepository(remoteDataSource, database, moshi)
     }
-
 }
