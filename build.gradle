@@ -6,6 +6,7 @@ buildscript {
         moshi_version = '1.14.0'
         volley_version = '1.2.1'
         kotlin_version = '1.8.0'
+        nav_version = '1.8.33-beta'
 
         mockkVersion = '1.13.4'
     }

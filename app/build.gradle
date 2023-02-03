@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.devtools.ksp' version '1.8.10-1.0.9'
 }
 
 android {
@@ -51,6 +52,14 @@ android {
             useJUnitPlatform()
         }
     }
+
+    applicationVariants.all { variant ->
+        kotlin.sourceSets {
+            getByName(variant.name) {
+                kotlin.srcDir("build/generated/ksp/${variant.name}/kotlin")
+            }
+        }
+    }
 }
 
 dependencies {
@@ -77,6 +86,10 @@ dependencies {
 
     //Volley
     implementation "com.android.volley:volley:$volley_version"
+
+    //navigation
+    implementation("io.github.raamcosta.compose-destinations:core:$nav_version")
+    ksp("io.github.raamcosta.compose-destinations:ksp:$nav_version")
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "io.mockk:mockk:${mockkVersion}"
