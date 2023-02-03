@@ -42,5 +42,5 @@ interface CatFactsDao {
     fun getAllCatImages(): Flow<List<CatImageDbModel>>
 
     @Query("SELECT COUNT(id) FROM facts_random")
-    fun getRandomFactsCount(): Int
+    suspend fun getRandomFactsCount(): Int
 }

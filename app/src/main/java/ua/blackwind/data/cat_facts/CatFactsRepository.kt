@@ -3,6 +3,7 @@ package ua.blackwind.data.cat_facts
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -34,7 +35,7 @@ class CatFactsRepository @Inject constructor(
         dao.deleteRandomCatFactById(id)
     }
 
-    fun fetchNewRandomCatFacts() {
+    suspend fun fetchNewRandomCatFacts() {
         val factsRequestCount = when (checkDbRandomCatFactsCount()) {
             in 10..20 -> 10
             in 0..10 -> 20
@@ -61,14 +62,14 @@ class CatFactsRepository @Inject constructor(
                 GlobalScope.launch(Dispatchers.IO) { dao.insertRandomCatFactsList(it) }
             }
         } catch (exception: Exception) {
-            fetchNewRandomCatFacts()
+            GlobalScope.launch(IO) { fetchNewRandomCatFacts() }
         }
     }
 
     private fun handleApiErrors(exception: Exception) {
-       //TODO implement error message channel to inform user about request failures when db is empty
+        //TODO implement error message channel to inform user about request failures when db is empty
     }
 
-    private fun checkDbRandomCatFactsCount() = dao.getRandomFactsCount()
+    private suspend fun checkDbRandomCatFactsCount() = dao.getRandomFactsCount()
 
 }

@@ -31,7 +31,7 @@ object Singleton {
     @Provides
     fun provideMoshi(): Moshi {
         return Moshi.Builder()
-            .add(KotlinJsonAdapterFactory::class.java)
+            .add(KotlinJsonAdapterFactory())
             .build()
     }
 

@@ -17,7 +17,7 @@ class CatFactsRemoteDataSource @Inject constructor(
     ) {
         val request = JsonArrayRequest(
             Method.GET,
-            REQUEST_URL + factsRequestCount,
+            REQUEST_URL + factsRequestCount.toString(),
             null,
             successCallback,
             errorCallback
@@ -27,6 +27,6 @@ class CatFactsRemoteDataSource @Inject constructor(
 
     companion object {
         private const val REQUEST_URL =
-            "https://cat-fact.herokuapp.com/random?animal_type=cat&amount="
+            "https://cat-fact.herokuapp.com/facts/random?animal_type=cat&amount="
     }
 }

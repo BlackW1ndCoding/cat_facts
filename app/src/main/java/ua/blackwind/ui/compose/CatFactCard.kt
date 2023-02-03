@@ -1,9 +1,5 @@
 package ua.blackwind.ui.compose
 
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
-import android.content.res.Configuration.UI_MODE_TYPE_NORMAL
-import android.graphics.Bitmap
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,11 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,10 +64,29 @@ fun CatFactCard(catFact: CatFact) {
     }
 }
 
-@Preview(widthDp = 310, heightDp = 600, uiMode = UI_MODE_NIGHT_NO)
+@Composable
+fun CatFactCardNoMoreFacts() {
+    Card(shape = RoundedCornerShape(12.dp)) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.primary)
+        ) {
+            Text(
+                text = "Looks like we are out of cat facts to show.\n >_<\n Just press paw to load more cat facts. ^_^",
+                fontSize = 24.sp,
+                fontStyle = FontStyle.Italic,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Preview(widthDp = 310, heightDp = 600)
 @Composable
 private fun CatFactCardPreview() {
-    CatFactsTheme(darkTheme = false) {
+    CatFactsTheme(darkTheme = true) {
         CatFactCard(
             catFact = CatFact(
                 0,
@@ -82,5 +94,13 @@ private fun CatFactCardPreview() {
                 ""
             )
         )
+    }
+}
+
+@Preview(widthDp = 310, heightDp = 600)
+@Composable
+private fun CatFactCardNoMoreFactsPreview() {
+    CatFactsTheme(darkTheme = false) {
+        CatFactCardNoMoreFacts()
     }
 }
