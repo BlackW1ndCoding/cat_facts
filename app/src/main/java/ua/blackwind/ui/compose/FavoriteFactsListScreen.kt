@@ -11,10 +11,12 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavOptionsBuilder
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ua.blackwind.ui.model.CatFact
 
 @Composable
-fun FavoriteFactsListScreen(list: List<CatFact>) {
+fun FavoriteFactsListScreen(list: List<CatFact>, navigator: DestinationsNavigator) {
     Column(
         modifier = Modifier
             .padding(15.dp)
@@ -66,6 +68,7 @@ private fun FavoriteFactsListScreenPreview() {
                 "Cats and kittens should be acquired in pairs whenever possible as cat families interact best in pairs.",
                 ""
             )
-        )
+        ),
+        dummyNavigator
     )
 }

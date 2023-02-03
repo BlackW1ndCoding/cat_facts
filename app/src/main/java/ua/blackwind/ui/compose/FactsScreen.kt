@@ -1,6 +1,5 @@
 package ua.blackwind.ui.compose
 
-import android.widget.Space
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -11,11 +10,16 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ua.blackwind.ui.model.CatFact
 import ua.blackwind.ui.theme.CatFactsTheme
 
+@Destination(start = true)
 @Composable
-fun CatFactsScreen(catFact: CatFact) {
+fun CatFactsScreen(catFact: CatFact, navigator: DestinationsNavigator) {
+
+
     Surface(
         color = MaterialTheme.colorScheme.primary,
         modifier = Modifier
@@ -42,6 +46,9 @@ fun CatFactsScreen(catFact: CatFact) {
 @Composable
 private fun CatFactsScreenPreview() {
     CatFactsTheme(darkTheme = false) {
-        CatFactsScreen(catFact = CatFact(0, "Cats have the largest eyes of any mammal.", ""))
+        CatFactsScreen(
+            catFact = CatFact(0, "Cats have the largest eyes of any mammal.", ""),
+            dummyNavigator
+        )
     }
 }

@@ -12,7 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.ramcosta.composedestinations.DestinationsNavHost
 import dagger.hilt.android.AndroidEntryPoint
+import ua.blackwind.ui.compose.MainScreen
+import ua.blackwind.ui.compose.NavGraphs
 import ua.blackwind.ui.theme.CatFactsTheme
 
 @AndroidEntryPoint
@@ -23,23 +26,8 @@ class MainActivity: ComponentActivity() {
 
         setContent {
             CatFactsTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                }
+                MainScreen()
             }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    CatFactsTheme {
-        Column() {
-            Text(text = "HEllo, there is a bug")
         }
     }
 }
