@@ -1,52 +1,63 @@
 package ua.blackwind.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ua.blackwind.data.cat_facts.CatFactsRepository
-import ua.blackwind.data.db.model.RandomCatFactDbModel
 import ua.blackwind.ui.model.CatFact
 import javax.inject.Inject
 
 @HiltViewModel
 class CatFactsViewModel @Inject constructor(
     private val factsRepository: CatFactsRepository
-):
-    ViewModel() {
-    private val _currentFact = MutableStateFlow<CatFact?>(null)
-    val currentFact: StateFlow<CatFact?> = _currentFact
-    private val _nextFact = MutableStateFlow<CatFact?>(null)
-    val nextFact: StateFlow<CatFact?> = _nextFact
+): ViewModel() {
 
-    private var currentFactIndex = 0
-    private var currentFactsList = listOf<CatFact>()
-    private var updatedFactsList = listOf<RandomCatFactDbModel>()
+    private val _facts = MutableStateFlow<List<CatFact>>(emptyList())
+    val facts: StateFlow<List<CatFact>> = _facts
+
+    private var factsBuffer = listOf<CatFact>()
+
+    val allFacts = factsRepository.getAllRandomCatFacts()
+        .map { list ->
+            list.map { model -> CatFact(model.id!!, model.text, "") }.sortedBy { it.id }
+        }
 
     init {
-        viewModelScope.launch { factsRepository.fetchNewRandomCatFacts() }
-        viewModelScope.launch(IO) {
-            factsRepository.getAllRandomCatFacts().collectLatest {
-                updatedFactsList = it
-                if (currentFactsList.size < 2 && updatedFactsList.isNotEmpty()) {
-                    currentFactsList = updatedFactsList.map { CatFact(it.id!!, it.text, "") }
-                    _currentFact.update { currentFactsList[0] }
+        viewModelScope.launch {
+            allFacts.collectLatest { list ->
+                factsBuffer = list.take(10)
+                if (_facts.value.size < 10) {
+                    _facts.update { factsBuffer.take(10) }
                 }
-
             }
-            _currentFact.update { currentFactsList[0] }
-//            _nextFact.update {
-//                try {
-//                    currentFactsList[1]
-//                } catch (exception: Exception) {
-//                    null
-//                }
-//            }
         }
+        viewModelScope.launch {
+            factsRepository.fetchNewRandomCatFacts()
+        }
+    }
+
+    fun onSwipe(catFact: CatFact) {
+        Log.d(
+            "SWIPE",
+            "swiped fact with id ${catFact.id} facts last id is ${_facts.value.last().id}"
+        )
+//        if (catFact.id == _facts.value.last().id) {
+//            _facts.update { listOf(_facts.value.last()).plus(factsBuffer) }
+//        }
+
+        viewModelScope.launch { factsRepository.fetchNewRandomCatFacts() }
+        viewModelScope.launch {
+            factsRepository.deleteRandomCatFactById(catFact.id)
+        }
+
+        if (catFact.id == _facts.value.last().id) {
+            viewModelScope.launch {
+                _facts.update { factsBuffer }
+            }
+        }
+
     }
 }

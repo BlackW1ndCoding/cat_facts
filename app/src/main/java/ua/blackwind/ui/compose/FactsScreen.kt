@@ -13,6 +13,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.alexstyl.swipeablecard.Direction
+import com.alexstyl.swipeablecard.rememberSwipeableCardState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ua.blackwind.ui.CatFactsViewModel
@@ -23,13 +25,15 @@ import ua.blackwind.ui.theme.CatFactsTheme
 @Composable
 fun CatFactsScreen(navigator: DestinationsNavigator) {
     val viewModel = hiltViewModel<CatFactsViewModel>()
-    val currentFact by viewModel.currentFact.collectAsState()
-
-    CatFactsScreenUi(currentFact)
+    val facts by viewModel.facts.collectAsState(initial = emptyList())
+    CatFactsScreenUi(facts, viewModel::onSwipe)
 }
 
 @Composable
-fun CatFactsScreenUi(catFact: CatFact?) {
+fun CatFactsScreenUi(
+    facts: List<CatFact>,
+    onCardSwipe: (CatFact) -> Unit
+) {
     Surface(
         color = MaterialTheme.colorScheme.primary,
         modifier = Modifier
@@ -47,12 +51,15 @@ fun CatFactsScreenUi(catFact: CatFact?) {
                     .fillMaxWidth()
                     .height(18.dp)
             )
-            if (catFact != null) {
-                CatFactCard(catFact = catFact)
-            } else {
+            Box {
+                val states = facts.reversed().map { it to rememberSwipeableCardState() }
                 CatFactCardNoMoreFacts()
+                states.forEach { (fact, state) ->
+                    if (state.swipedDirection == null) {
+                        CatFactCard(catFact = fact, state = state, onSwipe = onCardSwipe)
+                    }
+                }
             }
-
         }
     }
 }

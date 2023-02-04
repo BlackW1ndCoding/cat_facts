@@ -15,12 +15,31 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.alexstyl.swipeablecard.*
 import ua.blackwind.ui.model.CatFact
 import ua.blackwind.ui.theme.CatFactsTheme
+import com.alexstyl.swipeablecard.Direction as SwipeDirection
 
+@OptIn(ExperimentalSwipeableCardApi::class)
 @Composable
-fun CatFactCard(catFact: CatFact) {
-    Card(shape = RoundedCornerShape(12.dp)) {
+fun CatFactCard(
+    catFact: CatFact,
+    state: SwipeableCardState,
+    onSwipe: (CatFact) -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier
+            .swipableCard(
+                state = state,
+                onSwiped = { onSwipe(catFact) },
+                {},
+                listOf(
+                    com.alexstyl.swipeablecard.Direction.Up,
+                    com.alexstyl.swipeablecard.Direction.Down
+                )
+            )
+    ) {
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
@@ -34,7 +53,7 @@ fun CatFactCard(catFact: CatFact) {
 //                Modifier.weight(0.6f)
 //            )
             Surface(
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier
                     .align(alignment = Alignment.TopCenter)
                     .width(boxWidth)
@@ -74,7 +93,7 @@ fun CatFactCardNoMoreFacts() {
                 .background(MaterialTheme.colorScheme.primary)
         ) {
             Text(
-                text = "Looks like we are out of cat facts to show.\n >_<\n Just press paw to load more cat facts. ^_^",
+                text = "Looks like we are out of cat facts to show.\n >_<\n Just press paw to load more. ^_^",
                 fontSize = 24.sp,
                 fontStyle = FontStyle.Italic,
                 textAlign = TextAlign.Center
@@ -92,7 +111,9 @@ private fun CatFactCardPreview() {
                 0,
                 "Cats have the largest eyes of any mammal.",
                 ""
-            )
+            ),
+            rememberSwipeableCardState(),
+            {}
         )
     }
 }
