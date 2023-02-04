@@ -92,8 +92,9 @@ dependencies {
     implementation("io.github.raamcosta.compose-destinations:core:$nav_version")
     ksp("io.github.raamcosta.compose-destinations:ksp:$nav_version")
     implementation "androidx.hilt:hilt-navigation-compose:$compose_hilt_navigation_version"
-    //viewModel
-    //implementation 'com.github.sebaslogen.resaca:resacahilt:2.3.3'
+
+    //swipeable cards
+    implementation 'com.alexstyl.swipeablecard:swipeablecard:0.1.0'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "io.mockk:mockk:${mockkVersion}"
