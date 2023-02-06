@@ -5,10 +5,12 @@ import com.squareup.moshi.adapter
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import ua.blackwind.data.api.CatFactJSON
 import ua.blackwind.data.db.CatFactsDatabase
+import ua.blackwind.data.db.model.CurrentRandomCatFactId
 import ua.blackwind.data.db.model.FavoriteCatFactDBModel
 import ua.blackwind.data.db.model.RandomCatFactDbModel
 import ua.blackwind.data.mapToDbModel
@@ -20,6 +22,34 @@ class CatFactsRepository @Inject constructor(
     private val moshi: Moshi
 ): ICatFactsRepository {
     private val dao = db.dao
+
+    init {
+        GlobalScope.launch(IO) {
+            if (dao.getCurrentRandomFactId().id == 0) {
+                fetchNewRandomCatFacts(30)
+            }
+
+            dao.getLastLoadedRandomFactId().collectLatest { lastId ->
+                val currentRandomCatFactId = dao.getCurrentRandomFactId().id
+                if (lastId - currentRandomCatFactId < 20) {
+                    fetchNewRandomCatFacts(20)
+                }
+            }
+        }
+
+    }
+
+    override suspend fun insertCurrentRandomFactId(id: Int) {
+        dao.insertCurrentRandomFactId(CurrentRandomCatFactId(id = id))
+    }
+
+    override suspend fun getRandomFactsListByIdRange(
+        first: Int,
+        last: Int
+    ): List<RandomCatFactDbModel> {
+        return dao.getRandomCatFactsByIdRange(first, last)
+    }
+
     override fun getAllRandomCatFacts(): Flow<List<RandomCatFactDbModel>> =
         dao.getAllRandomCatFacts()
 
@@ -34,17 +64,10 @@ class CatFactsRepository @Inject constructor(
         dao.deleteRandomCatFactById(id)
     }
 
-    suspend fun fetchNewRandomCatFacts() {
-        val factsRequestCount = when (checkDbRandomCatFactsCount()) {
-            in 10..20 -> 10
-            in 0..10 -> 20
-            else -> 0
-        }
-
-        if (factsRequestCount == 0) return
+    fun fetchNewRandomCatFacts(count: Int) {
 
         catFactsRemoteDataSource.loadNewCatFacts(
-            factsRequestCount,
+            count,
             ::loadRandomFactsIntoDb,
             ::handleApiErrors
         )
@@ -61,7 +84,7 @@ class CatFactsRepository @Inject constructor(
                 GlobalScope.launch(IO) { dao.insertRandomCatFactsList(it) }
             }
         } catch (exception: Exception) {
-            GlobalScope.launch(IO) { fetchNewRandomCatFacts() }
+            GlobalScope.launch(IO) { fetchNewRandomCatFacts(20) }
         }
     }
 

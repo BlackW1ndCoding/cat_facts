@@ -52,7 +52,7 @@ interface CatFactsDao {
     @Query("SELECT * FROM current_random_fact WHERE id == 1")
     suspend fun getCurrentRandomFactId(): CurrentRandomCatFactId
 
-    @Query("SELECT id FROM facts_random ORDER BY ASC LIMIT 1")
+    @Query("SELECT id FROM facts_random ORDER BY id DESC LIMIT 1")
     fun getLastLoadedRandomFactId(): Flow<Int>
 
     @Query("SELECT * from facts_random WHERE id BETWEEN :first AND :last ORDER BY id ASC ")
