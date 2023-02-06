@@ -11,6 +11,6 @@ interface ICatFactsRepository {
     suspend fun deleteRandomCatFactById(id: Int)
     suspend fun deleteFavoriteCatFactById(id: Int)
     suspend fun getRandomFactsListByIdRange(first: Int, last: Int): List<RandomCatFactDbModel>
-
     suspend fun insertCurrentRandomFactId(id: Int)
+    suspend fun getCurrentRandomFactId(): Int
 }

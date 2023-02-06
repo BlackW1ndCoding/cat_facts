@@ -4,10 +4,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ua.blackwind.data.cat_facts.CatFactsRepository
+import ua.blackwind.data.db.model.RandomCatFactDbModel
 import ua.blackwind.ui.model.CatFact
+import ua.blackwind.ui.model.toCatFact
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,24 +21,38 @@ class CatFactsViewModel @Inject constructor(
     private val _facts = MutableStateFlow<List<CatFact>>(emptyList())
     val facts: StateFlow<List<CatFact>> = _facts
 
-    private var factsBuffer = listOf<CatFact>()
-
-    val allFacts = factsRepository.getAllRandomCatFacts()
-        .map { list ->
-            list.map { model -> CatFact(model.id!!, model.text, "") }.sortedBy { it.id }
+    init {
+        viewModelScope.launch(IO) {
+            val currentFact = factsRepository.getCurrentRandomFactId()
+            getMoreCatFactsFromDB(currentFact, currentFact + 10)
         }
 
-    init {
-        viewModelScope.launch {
-            allFacts.collectLatest { list ->
-                factsBuffer = list.take(10)
-                if (_facts.value.size < 10) {
-                    _facts.update { factsBuffer.take(10) }
+        viewModelScope.launch(IO) {
+            factsRepository.getLastRandomFactId().collectLatest { id ->
+                Log.d("FACTS", "Collecting id $id")
+                id?.let { last ->
+                    if (_facts.value.isEmpty()) {
+                        val current = factsRepository.getCurrentRandomFactId()
+                        Log.d("FACTS", "Current id $current")
+                        getMoreCatFactsFromDB(current, last)
+                    }
                 }
             }
         }
-        viewModelScope.launch {
-            factsRepository.fetchNewRandomCatFacts()
+    }
+
+    private fun getMoreCatFactsFromDB(
+        current: Int,
+        last: Int
+    ) {
+        Log.d("FACTS"," getting more facts from db for $current and $last")
+        viewModelScope.launch(IO) {
+            _facts.update {
+                factsRepository.getRandomFactsListByIdRange(
+                    current,
+                    if (last - current > 10) current + 10 else last
+                ).map { it.toCatFact() }
+            }
         }
     }
 
@@ -44,20 +61,17 @@ class CatFactsViewModel @Inject constructor(
             "SWIPE",
             "swiped fact with id ${catFact.id} facts last id is ${_facts.value.last().id}"
         )
-//        if (catFact.id == _facts.value.last().id) {
-//            _facts.update { listOf(_facts.value.last()).plus(factsBuffer) }
-//        }
+        viewModelScope.launch { factsRepository.insertCurrentRandomFactId(catFact.id) }
 
-        viewModelScope.launch { factsRepository.fetchNewRandomCatFacts() }
-        viewModelScope.launch {
-            factsRepository.deleteRandomCatFactById(catFact.id)
+        if (catFact.id + 1 == _facts.value.last().id) {
+            Log.d(
+                "SWIPE",
+                "attempting loading facts }"
+            )
+            getMoreCatFactsFromDB(
+                catFact.id,
+                catFact.id + 10
+            )
         }
-
-        if (catFact.id == _facts.value.last().id) {
-            viewModelScope.launch {
-                _facts.update { factsBuffer }
-            }
-        }
-
     }
 }

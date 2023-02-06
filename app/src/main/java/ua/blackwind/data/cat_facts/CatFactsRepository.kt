@@ -25,24 +25,33 @@ class CatFactsRepository @Inject constructor(
 
     init {
         GlobalScope.launch(IO) {
-            if (dao.getCurrentRandomFactId().id == 0) {
-                fetchNewRandomCatFacts(30)
-            }
 
             dao.getLastLoadedRandomFactId().collectLatest { lastId ->
-                val currentRandomCatFactId = dao.getCurrentRandomFactId().id
+
+                if (lastId == null) {
+                    fetchNewRandomCatFacts(20)
+                    return@collectLatest
+                }
+
+                val currentRandomCatFactId = dao.getCurrentRandomFactId()?.id ?: 0
+
                 if (lastId - currentRandomCatFactId < 20) {
                     fetchNewRandomCatFacts(20)
                 }
             }
-        }
 
+        }
+    }
+
+    override suspend fun getCurrentRandomFactId(): Int {
+        return dao.getCurrentRandomFactId()?.id ?: 0
     }
 
     override suspend fun insertCurrentRandomFactId(id: Int) {
         dao.insertCurrentRandomFactId(CurrentRandomCatFactId(id = id))
     }
 
+    fun getLastRandomFactId(): Flow<Int?> = dao.getLastLoadedRandomFactId()
     override suspend fun getRandomFactsListByIdRange(
         first: Int,
         last: Int

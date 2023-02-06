@@ -25,6 +25,7 @@ object Singleton {
     fun provideCatFactsDatabase(@ApplicationContext context: Context): CatFactsDatabase {
         return Room
             .databaseBuilder(context, CatFactsDatabase::class.java, CatFactsDatabase.DB_NAME)
+            //.createFromAsset("cat_facts.db")
             .build()
     }
 
