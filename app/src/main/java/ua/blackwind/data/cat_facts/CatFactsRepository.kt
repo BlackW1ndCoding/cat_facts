@@ -2,7 +2,6 @@ package ua.blackwind.data.cat_facts
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow

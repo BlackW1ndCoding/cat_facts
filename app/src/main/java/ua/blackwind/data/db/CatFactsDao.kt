@@ -2,9 +2,11 @@ package ua.blackwind.data.db
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import ua.blackwind.data.db.model.CatImageDbModel
+import ua.blackwind.data.db.model.CurrentRandomCatFactId
 import ua.blackwind.data.db.model.FavoriteCatFactDBModel
 import ua.blackwind.data.db.model.RandomCatFactDbModel
 
@@ -43,4 +45,16 @@ interface CatFactsDao {
 
     @Query("SELECT COUNT(id) FROM facts_random")
     suspend fun getRandomFactsCount(): Int
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCurrentRandomFactId(id: CurrentRandomCatFactId)
+
+    @Query("SELECT * FROM current_random_fact WHERE id == 1")
+    suspend fun getCurrentRandomFactId(): CurrentRandomCatFactId
+
+    @Query("SELECT id FROM facts_random ORDER BY ASC LIMIT 1")
+    fun getLastLoadedRandomFactId(): Flow<Int>
+
+    @Query("SELECT * from facts_random WHERE id BETWEEN :first AND :last ORDER BY id ASC ")
+    fun getRandomCatFactsByIdRange(first: Int, last: Int): List<RandomCatFactDbModel>
 }
