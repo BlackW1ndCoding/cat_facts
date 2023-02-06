@@ -27,11 +27,11 @@ class CatFactsRepository @Inject constructor(
     override fun getAllFavoriteCatFacts(): Flow<List<FavoriteCatFactDBModel>> =
         dao.getAllFavoriteCatFacts()
 
-    override suspend fun deleteRandomCatFactById(id: Int?) {
+    override suspend fun deleteRandomCatFactById(id: Int) {
         dao.deleteRandomCatFactById(id)
     }
 
-    override suspend fun deleteFavoriteCatFactById(id: Int?) {
+    override suspend fun deleteFavoriteCatFactById(id: Int) {
         dao.deleteRandomCatFactById(id)
     }
 
@@ -59,7 +59,7 @@ class CatFactsRepository @Inject constructor(
                 jsonList.filter { it.status.verified ?: false }
                     .map { catFactJSON -> catFactJSON.mapToDbModel() }
             }?.let {
-                GlobalScope.launch(Dispatchers.IO) { dao.insertRandomCatFactsList(it) }
+                GlobalScope.launch(IO) { dao.insertRandomCatFactsList(it) }
             }
         } catch (exception: Exception) {
             GlobalScope.launch(IO) { fetchNewRandomCatFacts() }
