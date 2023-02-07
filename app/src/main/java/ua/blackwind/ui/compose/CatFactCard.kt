@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.sp
 import com.alexstyl.swipeablecard.*
 import ua.blackwind.ui.model.CatFact
 import ua.blackwind.ui.theme.CatFactsTheme
-import com.alexstyl.swipeablecard.Direction as SwipeDirection
 
 @OptIn(ExperimentalSwipeableCardApi::class)
 @Composable

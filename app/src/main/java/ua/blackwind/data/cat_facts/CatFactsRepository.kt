@@ -33,7 +33,7 @@ class CatFactsRepository @Inject constructor(
                     return@collectLatest
                 }
 
-                val currentRandomCatFactId = dao.getCurrentRandomFactId()?.id ?: 0
+                val currentRandomCatFactId = dao.getCurrentRandomFactId()?.id ?: 1
 
                 if (lastId - currentRandomCatFactId < 20) {
                     fetchNewRandomCatFacts(20)
@@ -44,7 +44,7 @@ class CatFactsRepository @Inject constructor(
     }
 
     override suspend fun getCurrentRandomFactId(): Int {
-        return dao.getCurrentRandomFactId()?.id ?: 0
+        return dao.getCurrentRandomFactId()?.id ?: 1
     }
 
     override suspend fun insertCurrentRandomFactId(id: Int) {

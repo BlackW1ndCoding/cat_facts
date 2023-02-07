@@ -7,13 +7,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.alexstyl.swipeablecard.Direction
+import com.alexstyl.swipeablecard.SwipeableCardState
 import com.alexstyl.swipeablecard.rememberSwipeableCardState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -26,14 +29,17 @@ import ua.blackwind.ui.theme.CatFactsTheme
 fun CatFactsScreen(navigator: DestinationsNavigator) {
     val viewModel = hiltViewModel<CatFactsViewModel>()
     val facts by viewModel.facts.collectAsState(initial = emptyList())
-    CatFactsScreenUi(facts, viewModel::onSwipe)
+
+    val states = facts.reversed().map { it to rememberSwipeableCardState(facts) }
+    CatFactsScreenUi(states, viewModel::onSwipe)
 }
 
 @Composable
 fun CatFactsScreenUi(
-    facts: List<CatFact>,
+    states: List<Pair<CatFact, SwipeableCardState>>,
     onCardSwipe: (CatFact) -> Unit
 ) {
+
     Surface(
         color = MaterialTheme.colorScheme.primary,
         modifier = Modifier
@@ -51,8 +57,9 @@ fun CatFactsScreenUi(
                     .fillMaxWidth()
                     .height(18.dp)
             )
+
             Box {
-                val states = facts.reversed().map { it to rememberSwipeableCardState() }
+
                 CatFactCardNoMoreFacts()
                 states.forEach { (fact, state) ->
                     if (state.swipedDirection == null) {
@@ -61,6 +68,19 @@ fun CatFactsScreenUi(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun rememberSwipeableCardState(key: Any): SwipeableCardState {
+    val screenWidth = with(LocalDensity.current) {
+        LocalConfiguration.current.screenWidthDp.dp.toPx()
+    }
+    val screenHeight = with(LocalDensity.current) {
+        LocalConfiguration.current.screenHeightDp.dp.toPx()
+    }
+    return remember(key) {
+        SwipeableCardState(screenWidth, screenHeight)
     }
 }
 

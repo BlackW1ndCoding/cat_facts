@@ -5,13 +5,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ua.blackwind.data.cat_facts.CatFactsRepository
-import ua.blackwind.data.db.model.RandomCatFactDbModel
 import ua.blackwind.ui.model.CatFact
 import ua.blackwind.ui.model.toCatFact
 import javax.inject.Inject
+
 
 @HiltViewModel
 class CatFactsViewModel @Inject constructor(
@@ -45,14 +48,16 @@ class CatFactsViewModel @Inject constructor(
         current: Int,
         last: Int
     ) {
-        Log.d("FACTS"," getting more facts from db for $current and $last")
+        //TODO find bug with loading new facts
+        Log.d("FACTS", " getting more facts from db for $current and $last")
         viewModelScope.launch(IO) {
-            _facts.update {
-                factsRepository.getRandomFactsListByIdRange(
-                    current,
-                    if (last - current > 10) current + 10 else last
-                ).map { it.toCatFact() }
-            }
+
+            val list = factsRepository.getRandomFactsListByIdRange(
+                current,
+                if (last - current > 10) current + 10 else last
+            ).map { it.toCatFact() }
+
+            _facts.update { list }
         }
     }
 
@@ -61,7 +66,7 @@ class CatFactsViewModel @Inject constructor(
             "SWIPE",
             "swiped fact with id ${catFact.id} facts last id is ${_facts.value.last().id}"
         )
-        viewModelScope.launch { factsRepository.insertCurrentRandomFactId(catFact.id) }
+        viewModelScope.launch { factsRepository.insertCurrentRandomFactId(catFact.id + 1) }
 
         if (catFact.id + 1 == _facts.value.last().id) {
             Log.d(
@@ -69,7 +74,7 @@ class CatFactsViewModel @Inject constructor(
                 "attempting loading facts }"
             )
             getMoreCatFactsFromDB(
-                catFact.id,
+                catFact.id + 1,
                 catFact.id + 10
             )
         }
