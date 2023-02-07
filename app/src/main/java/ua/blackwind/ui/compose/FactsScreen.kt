@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.alexstyl.swipeablecard.SwipeableCardState
-import com.alexstyl.swipeablecard.rememberSwipeableCardState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ua.blackwind.ui.CatFactsViewModel
@@ -29,7 +28,6 @@ import ua.blackwind.ui.theme.CatFactsTheme
 fun CatFactsScreen(navigator: DestinationsNavigator) {
     val viewModel = hiltViewModel<CatFactsViewModel>()
     val facts by viewModel.facts.collectAsState(initial = emptyList())
-
     val states = facts.reversed().map { it to rememberSwipeableCardState(facts) }
     CatFactsScreenUi(states, viewModel::onSwipe)
 }
@@ -72,7 +70,7 @@ fun CatFactsScreenUi(
 }
 
 @Composable
-fun rememberSwipeableCardState(key: Any): SwipeableCardState {
+private fun rememberSwipeableCardState(key: Any): SwipeableCardState {
     val screenWidth = with(LocalDensity.current) {
         LocalConfiguration.current.screenWidthDp.dp.toPx()
     }

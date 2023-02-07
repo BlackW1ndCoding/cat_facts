@@ -34,10 +34,10 @@ interface CatFactsDao {
     @Query("DELETE FROM cat_image WHERE id == :id")
     suspend fun deleteCatImageById(id: Int)
 
-    @Query("SELECT * FROM facts_random ORDER BY id DESC")
+    @Query("SELECT * FROM facts_random ORDER BY id ASC")
     fun getAllRandomCatFacts(): Flow<List<RandomCatFactDbModel>>
 
-    @Query("SELECT * FROM facts_favorite ORDER BY id DESC")
+    @Query("SELECT * FROM facts_favorite ORDER BY id ASC")
     fun getAllFavoriteCatFacts(): Flow<List<FavoriteCatFactDBModel>>
 
     @Query("SELECT * FROM cat_image ORDER BY id DESC")
@@ -50,11 +50,14 @@ interface CatFactsDao {
     suspend fun insertCurrentRandomFactId(id: CurrentRandomCatFactId)
 
     @Query("SELECT * FROM current_random_fact WHERE dbId == 1")
-    suspend fun getCurrentRandomFactId(): CurrentRandomCatFactId?
+    fun getCurrentRandomFactId(): Flow<CurrentRandomCatFactId?>
 
     @Query("SELECT id FROM facts_random ORDER BY id DESC LIMIT 1")
     fun getLastLoadedRandomFactId(): Flow<Int?>
 
-    @Query("SELECT * from facts_random WHERE id BETWEEN :first AND :last ORDER BY id ASC ")
+    @Query("SELECT * FROM facts_random WHERE id BETWEEN :first AND :last ORDER BY id ASC ")
     fun getRandomCatFactsByIdRange(first: Int, last: Int): List<RandomCatFactDbModel>
+
+    @Query("DELETE FROM facts_random WHERE id < :id")
+    suspend fun deleteRandomCatFactsWithIdLessThan(id: Int)
 }

@@ -4,10 +4,11 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.json.JSONArray
+import ua.blackwind.data.api.ApiState
 import ua.blackwind.data.api.CatFactJSON
 import ua.blackwind.data.db.CatFactsDatabase
 import ua.blackwind.data.db.model.CurrentRandomCatFactId
@@ -22,36 +23,36 @@ class CatFactsRepository @Inject constructor(
     private val moshi: Moshi
 ): ICatFactsRepository {
     private val dao = db.dao
+    val state = Channel<ApiState>()
 
     init {
         GlobalScope.launch(IO) {
+            getCurrentRandomFactId()
+                .combine(getLastRandomFactId()) { first, last -> Pair(first, last) }
+                .collectLatest { (current, last) ->
+                    if (last - current < RANDOM_FACTS_LOAD_SIZE) {
+                        fetchNewRandomCatFacts(RANDOM_FACTS_LOAD_SIZE)
+                    } else {
+                        state.send(ApiState.Success)
+                    }
 
-            dao.getLastLoadedRandomFactId().collectLatest { lastId ->
-
-                if (lastId == null) {
-                    fetchNewRandomCatFacts(20)
-                    return@collectLatest
+                    if (current % DB_CLEAN_UP_THRESHOLD == 0) {
+                        dao.deleteRandomCatFactsWithIdLessThan(current)
+                    }
                 }
-
-                val currentRandomCatFactId = dao.getCurrentRandomFactId()?.id ?: 1
-
-                if (lastId - currentRandomCatFactId < 20) {
-                    fetchNewRandomCatFacts(20)
-                }
-            }
-
         }
     }
 
-    override suspend fun getCurrentRandomFactId(): Int {
-        return dao.getCurrentRandomFactId()?.id ?: 1
+    override fun getCurrentRandomFactId(): Flow<Int> {
+        return dao.getCurrentRandomFactId().map { it?.id ?: DEFAULT_ID }
     }
 
     override suspend fun insertCurrentRandomFactId(id: Int) {
         dao.insertCurrentRandomFactId(CurrentRandomCatFactId(id = id))
     }
 
-    fun getLastRandomFactId(): Flow<Int?> = dao.getLastLoadedRandomFactId()
+    override fun getLastRandomFactId(): Flow<Int> = dao.getLastLoadedRandomFactId().map { it ?: DEFAULT_ID }
+
     override suspend fun getRandomFactsListByIdRange(
         first: Int,
         last: Int
@@ -74,6 +75,7 @@ class CatFactsRepository @Inject constructor(
     }
 
     fun fetchNewRandomCatFacts(count: Int) {
+        GlobalScope.launch { state.send(ApiState.Loading) }
 
         catFactsRemoteDataSource.loadNewCatFacts(
             count,
@@ -90,17 +92,25 @@ class CatFactsRepository @Inject constructor(
                 jsonList.filter { it.status.verified ?: false }
                     .map { catFactJSON -> catFactJSON.mapToDbModel() }
             }?.let {
-                GlobalScope.launch(IO) { dao.insertRandomCatFactsList(it) }
+                GlobalScope.launch(IO) {
+                    dao.insertRandomCatFactsList(it)
+                    state.send(ApiState.Success)
+                }
             }
+
         } catch (exception: Exception) {
-            GlobalScope.launch(IO) { fetchNewRandomCatFacts(20) }
+            GlobalScope.launch(IO) { fetchNewRandomCatFacts(RANDOM_FACTS_LOAD_SIZE) }
         }
     }
 
     private fun handleApiErrors(exception: Exception) {
-        //TODO implement error message channel to inform user about request failures when db is empty
+        GlobalScope.launch { state.send(ApiState.Error) }
     }
 
-    private suspend fun checkDbRandomCatFactsCount() = dao.getRandomFactsCount()
+    companion object {
+        private const val RANDOM_FACTS_LOAD_SIZE = 20
+        private const val DEFAULT_ID = 1
+        private const val DB_CLEAN_UP_THRESHOLD = 30
+    }
 
 }
