@@ -6,21 +6,31 @@ import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
 import ua.blackwind.data.cat_facts.CatFactsRemoteDataSource
 import ua.blackwind.data.cat_facts.CatFactsRepository
 import ua.blackwind.data.cat_facts.ICatFactsRemoteDataSource
 import ua.blackwind.data.cat_facts.ICatFactsRepository
 import ua.blackwind.data.db.CatFactsDatabase
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object Singleton {
+object SingletonProvides {
+    @Provides
+    @Singleton
+    @ApplicationScope
+    fun provideActivityCoroutineScope(): CoroutineScope = MainScope()
 
+    @Singleton
     @Provides
     fun provideCatFactsDatabase(@ApplicationContext context: Context): CatFactsDatabase {
         return Room
@@ -29,6 +39,7 @@ object Singleton {
             .build()
     }
 
+    @Singleton
     @Provides
     fun provideMoshi(): Moshi {
         return Moshi.Builder()
@@ -36,20 +47,14 @@ object Singleton {
             .build()
     }
 
+    @Singleton
     @Provides
     fun provideRequestQueue(@ApplicationContext context: Context) = Volley.newRequestQueue(context)
 
+    @Singleton
     @Provides
     fun provideCatFactsRemoteDataSource(requestQueue: RequestQueue): ICatFactsRemoteDataSource {
         return CatFactsRemoteDataSource(requestQueue)
     }
 
-    @Provides
-    fun provideCatFactsRepository(
-        remoteDataSource: ICatFactsRemoteDataSource,
-        database: CatFactsDatabase,
-        moshi: Moshi
-    ): ICatFactsRepository {
-        return CatFactsRepository(remoteDataSource, database, moshi)
-    }
 }

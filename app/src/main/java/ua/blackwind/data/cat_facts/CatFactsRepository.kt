@@ -2,11 +2,10 @@ package ua.blackwind.data.cat_facts
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import org.json.JSONArray
 import ua.blackwind.data.api.ApiState
 import ua.blackwind.data.api.CatFactJSON
@@ -15,9 +14,13 @@ import ua.blackwind.data.db.model.CurrentRandomCatFactId
 import ua.blackwind.data.db.model.FavoriteCatFactDBModel
 import ua.blackwind.data.db.model.RandomCatFactDbModel
 import ua.blackwind.data.mapToDbModel
+import ua.blackwind.di.ApplicationScope
+import ua.blackwind.di.IoDispatcher
 import javax.inject.Inject
 
 class CatFactsRepository @Inject constructor(
+    @ApplicationScope private val applicationScope: CoroutineScope,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher,
     private val catFactsRemoteDataSource: ICatFactsRemoteDataSource,
     db: CatFactsDatabase,
     private val moshi: Moshi
@@ -26,7 +29,7 @@ class CatFactsRepository @Inject constructor(
     val state = Channel<ApiState>()
 
     init {
-        GlobalScope.launch(IO) {
+        applicationScope.launch(dispatcher) {
             getCurrentRandomFactId()
                 .combine(getLastRandomFactId()) { first, last -> Pair(first, last) }
                 .collectLatest { (current, last) ->
@@ -51,7 +54,8 @@ class CatFactsRepository @Inject constructor(
         dao.insertCurrentRandomFactId(CurrentRandomCatFactId(id = id))
     }
 
-    override fun getLastRandomFactId(): Flow<Int> = dao.getLastLoadedRandomFactId().map { it ?: DEFAULT_ID }
+    override fun getLastRandomFactId(): Flow<Int> =
+        dao.getLastLoadedRandomFactId().map { it ?: DEFAULT_ID }
 
     override suspend fun getRandomFactsListByIdRange(
         first: Int,
@@ -75,7 +79,7 @@ class CatFactsRepository @Inject constructor(
     }
 
     fun fetchNewRandomCatFacts(count: Int) {
-        GlobalScope.launch { state.send(ApiState.Loading) }
+        applicationScope.launch(dispatcher) { state.send(ApiState.Loading) }
 
         catFactsRemoteDataSource.loadNewCatFacts(
             count,
@@ -92,19 +96,19 @@ class CatFactsRepository @Inject constructor(
                 jsonList.filter { it.status.verified ?: false }
                     .map { catFactJSON -> catFactJSON.mapToDbModel() }
             }?.let {
-                GlobalScope.launch(IO) {
+                applicationScope.launch {
                     dao.insertRandomCatFactsList(it)
                     state.send(ApiState.Success)
                 }
             }
 
         } catch (exception: Exception) {
-            GlobalScope.launch(IO) { fetchNewRandomCatFacts(RANDOM_FACTS_LOAD_SIZE) }
+            applicationScope.launch(dispatcher) { fetchNewRandomCatFacts(RANDOM_FACTS_LOAD_SIZE) }
         }
     }
 
     private fun handleApiErrors(exception: Exception) {
-        GlobalScope.launch { state.send(ApiState.Error) }
+        applicationScope.launch { state.send(ApiState.Error) }
     }
 
     companion object {
