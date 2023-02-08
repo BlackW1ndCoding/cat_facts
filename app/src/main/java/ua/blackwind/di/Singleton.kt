@@ -6,19 +6,15 @@ import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import ua.blackwind.data.cat_facts.CatFactsRemoteDataSource
-import ua.blackwind.data.cat_facts.CatFactsRepository
 import ua.blackwind.data.cat_facts.ICatFactsRemoteDataSource
-import ua.blackwind.data.cat_facts.ICatFactsRepository
 import ua.blackwind.data.db.CatFactsDatabase
 import javax.inject.Singleton
 
