@@ -69,7 +69,7 @@ fun CatFactCard(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .width(boxWidth)
-                    .height(boxHeight * 0.4f)
+                    .defaultMinSize(minHeight = boxHeight * 0.4f)
             ) {
                 Text(
                     text = catFact.text,

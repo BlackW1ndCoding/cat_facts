@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ua.blackwind.data.cat_facts.CatFactsRepository
@@ -21,7 +22,8 @@ class CatFactsViewModel @Inject constructor(
     val facts: StateFlow<List<CatFact>> = _facts
 
     init {
-        viewModelScope.launch {
+        //TODO Investigate UI freezes
+        viewModelScope.launch(IO) {
             factsRepository.getCurrentRandomFactId()
                 .combine(factsRepository.getLastRandomFactId()) { current, last ->
                     Pair(current, last)
