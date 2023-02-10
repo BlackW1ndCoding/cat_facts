@@ -12,7 +12,6 @@ import ua.blackwind.ui.model.CatFact
 import ua.blackwind.ui.model.toCatFact
 import javax.inject.Inject
 
-
 @HiltViewModel
 class CatFactsViewModel @Inject constructor(
     private val factsRepository: CatFactsRepository

@@ -25,7 +25,7 @@ import ua.blackwind.ui.theme.CatFactsTheme
 
 @Destination(start = true)
 @Composable
-fun CatFactsScreen(navigator: DestinationsNavigator) {
+fun CatFactsScreen() {
     val viewModel = hiltViewModel<CatFactsViewModel>()
     val facts by viewModel.facts.collectAsState(initial = emptyList())
     val states = facts.reversed().map { it to rememberSwipeableCardState(facts) }
@@ -88,7 +88,6 @@ private fun rememberSwipeableCardState(key: Any): SwipeableCardState {
 private fun CatFactsScreenPreview() {
     CatFactsTheme(darkTheme = false) {
         CatFactsScreen(
-            navigator = dummyNavigator
         )
     }
 }
