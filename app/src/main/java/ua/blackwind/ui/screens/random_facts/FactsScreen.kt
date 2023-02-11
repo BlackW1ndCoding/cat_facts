@@ -1,16 +1,19 @@
 package ua.blackwind.ui.screens.random_facts
 
+import android.graphics.drawable.Icon
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -19,7 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.alexstyl.swipeablecard.SwipeableCardState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import ua.blackwind.R
 import ua.blackwind.ui.compose.CatFactCard
 import ua.blackwind.ui.compose.CatFactCardNoMoreFacts
 import ua.blackwind.ui.model.CatFact
@@ -59,7 +62,6 @@ fun CatFactsScreenUi(
                     .fillMaxWidth()
                     .height(18.dp)
             )
-
             Box {
 
                 CatFactCardNoMoreFacts()
@@ -67,6 +69,27 @@ fun CatFactsScreenUi(
                     if (state.swipedDirection == null) {
                         CatFactCard(catFact = fact, state = state, onSwipe = onCardSwipe)
                     }
+                }
+                Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+                    IconButton(
+                        onClick = { /*TODO*/ },
+                        colors = IconButtonDefaults.filledIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.secondary
+                        ),
+                        modifier = Modifier
+                            .size(60.dp)
+
+
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.paw_not_filled),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.size(50.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.size(10.dp))
                 }
             }
         }
@@ -90,7 +113,9 @@ private fun rememberSwipeableCardState(key: Any): SwipeableCardState {
 @Composable
 private fun CatFactsScreenPreview() {
     CatFactsTheme(darkTheme = false) {
-        CatFactsScreen(EmptyDestinationsNavigator
+        CatFactsScreenUi(
+            listOf(CatFact(0, "Hello, Kitty!", "") to rememberSwipeableCardState(0)),
+            {}
         )
     }
 }
