@@ -17,7 +17,7 @@ class MainActivity: ComponentActivity() {
         setContent {
             CatFactsTheme {
                 MainScreen(
-                    BottomBarIconResources(
+                    bottomBarIcons = BottomBarIconResources(
                         R.drawable.cat_face_filled,
                         R.drawable.paw_filled
                     )

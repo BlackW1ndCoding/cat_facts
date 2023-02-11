@@ -1,4 +1,4 @@
-package ua.blackwind.ui.compose
+package ua.blackwind.ui.compose.random_facts
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
@@ -19,13 +19,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.alexstyl.swipeablecard.SwipeableCardState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import ua.blackwind.ui.CatFactsViewModel
+import ua.blackwind.ui.compose.CatFactCard
+import ua.blackwind.ui.compose.CatFactCardNoMoreFacts
 import ua.blackwind.ui.model.CatFact
 import ua.blackwind.ui.theme.CatFactsTheme
 
 @Destination(start = true)
 @Composable
-fun CatFactsScreen() {
+fun CatFactsScreen(
+    navigator: DestinationsNavigator
+) {
     val viewModel = hiltViewModel<CatFactsViewModel>()
     val facts by viewModel.facts.collectAsState(initial = emptyList())
     val states = facts.reversed().map { it to rememberSwipeableCardState(facts) }
@@ -82,12 +87,11 @@ private fun rememberSwipeableCardState(key: Any): SwipeableCardState {
     }
 }
 
-
 @Preview(showSystemUi = true)
 @Composable
 private fun CatFactsScreenPreview() {
     CatFactsTheme(darkTheme = false) {
-        CatFactsScreen(
+        CatFactsScreen(EmptyDestinationsNavigator
         )
     }
 }
