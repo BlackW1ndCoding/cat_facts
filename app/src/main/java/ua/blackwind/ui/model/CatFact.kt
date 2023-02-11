@@ -1,5 +1,6 @@
 package ua.blackwind.ui.model
 
+import ua.blackwind.data.db.model.FavoriteCatFactDBModel
 import ua.blackwind.data.db.model.RandomCatFactDbModel
 
 data class CatFact(
@@ -10,3 +11,6 @@ data class CatFact(
 
 fun RandomCatFactDbModel.toCatFact() =
     CatFact(this.id, this.text, "")
+
+fun FavoriteCatFactDBModel.toCatFact() =
+    CatFact(this.id, this.text, this.imageUrl)

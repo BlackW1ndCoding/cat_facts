@@ -12,9 +12,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
-import ua.blackwind.ui.compose.destinations.CatFactsScreenDestination
-import ua.blackwind.ui.compose.destinations.DirectionDestination
-import ua.blackwind.ui.compose.destinations.FavoriteFactsListScreenDestination
+import ua.blackwind.ui.screens.NavGraphs
+import ua.blackwind.ui.screens.destinations.CatFactsScreenDestination
+import ua.blackwind.ui.screens.destinations.DirectionDestination
+import ua.blackwind.ui.screens.destinations.FavoriteFactsListScreenDestination
+
 import ua.blackwind.ui.theme.CatFactsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
