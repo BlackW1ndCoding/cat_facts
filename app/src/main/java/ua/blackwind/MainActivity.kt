@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import dagger.hilt.android.AndroidEntryPoint
-import ua.blackwind.ui.compose.BottomBarIconResources
-import ua.blackwind.ui.compose.MainScreen
+import ua.blackwind.ui.screens.main.BottomBarIconResources
+import ua.blackwind.ui.screens.main.MainScreen
 import ua.blackwind.ui.theme.CatFactsTheme
 
 @AndroidEntryPoint

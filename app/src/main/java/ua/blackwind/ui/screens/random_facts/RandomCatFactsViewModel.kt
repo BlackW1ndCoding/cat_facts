@@ -1,4 +1,4 @@
-package ua.blackwind.ui
+package ua.blackwind.ui.screens.random_facts
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -13,7 +13,7 @@ import ua.blackwind.ui.model.toCatFact
 import javax.inject.Inject
 
 @HiltViewModel
-class CatFactsViewModel @Inject constructor(
+class RandomCatFactsViewModel @Inject constructor(
     private val factsRepository: CatFactsRepository
 ): ViewModel() {
 

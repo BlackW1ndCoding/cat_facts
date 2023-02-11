@@ -1,4 +1,4 @@
-package ua.blackwind.ui.compose.favorite_facts
+package ua.blackwind.ui.screens.favorite_facts
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn

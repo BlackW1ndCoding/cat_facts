@@ -1,4 +1,4 @@
-package ua.blackwind.ui.compose
+package ua.blackwind.ui.screens.main
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.*
