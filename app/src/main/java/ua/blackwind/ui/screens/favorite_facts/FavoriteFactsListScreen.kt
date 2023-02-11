@@ -1,5 +1,6 @@
 package ua.blackwind.ui.screens.favorite_facts
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
@@ -30,8 +31,10 @@ fun FavoriteFactsListScreen(navigator: DestinationsNavigator) {
 fun FavoriteFactsListScreenUi(list: List<CatFact>) {
     Column(
         modifier = Modifier
+            .background(MaterialTheme.colorScheme.primary)
             .padding(15.dp)
             .fillMaxSize()
+
     ) {
         Text(
             text = "Your favorite cat facts:",
@@ -43,7 +46,7 @@ fun FavoriteFactsListScreenUi(list: List<CatFact>) {
                 .fillMaxWidth()
                 .height(15.dp)
         )
-        Surface(color = MaterialTheme.colorScheme.primary) {
+        Surface() {
             LazyColumn {
                 items(list.size) { index ->
                     FavoriteFactListItem(catFact = list[index])
@@ -61,7 +64,7 @@ fun FavoriteFactsListScreenUi(list: List<CatFact>) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun FavoriteFactsListScreenPreview() {
-    FavoriteFactsListScreen(
-        EmptyDestinationsNavigator
+    FavoriteFactsListScreenUi(
+        listOf(CatFact(0, "Hello Kitty!", ""))
     )
 }
