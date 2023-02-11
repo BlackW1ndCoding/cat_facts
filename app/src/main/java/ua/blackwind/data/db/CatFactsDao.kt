@@ -20,7 +20,7 @@ interface CatFactsDao {
     suspend fun insertRandomCatFactsList(list: List<RandomCatFactDbModel>)
 
     @Insert
-    suspend fun insertFavoriteCatFact(catFactDBModel: FavoriteCatFactDBModel)
+    suspend fun insertFavoriteCatFact(fact: FavoriteCatFactDBModel)
 
     @Insert
     suspend fun insertCatImage(catImage: CatImageDbModel)

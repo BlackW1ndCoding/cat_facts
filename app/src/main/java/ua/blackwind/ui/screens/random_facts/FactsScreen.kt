@@ -1,9 +1,6 @@
 package ua.blackwind.ui.screens.random_facts
 
-import android.graphics.drawable.Icon
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,13 +33,14 @@ fun CatFactsScreen(
     val viewModel = hiltViewModel<RandomCatFactsViewModel>()
     val facts by viewModel.facts.collectAsState(initial = emptyList())
     val states = facts.reversed().map { it to rememberSwipeableCardState(facts) }
-    CatFactsScreenUi(states, viewModel::onSwipe)
+    CatFactsScreenUi(states, viewModel::onSwipe, viewModel::onFavoriteClick)
 }
 
 @Composable
 fun CatFactsScreenUi(
     states: List<Pair<CatFact, SwipeableCardState>>,
-    onCardSwipe: (CatFact) -> Unit
+    onCardSwipe: (CatFact) -> Unit,
+    onFavoriteButtonPress: () -> Unit
 ) {
 
     Surface(
@@ -72,7 +70,7 @@ fun CatFactsScreenUi(
                 }
                 Column(modifier = Modifier.align(Alignment.BottomCenter)) {
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = { onFavoriteButtonPress() },
                         colors = IconButtonDefaults.filledIconButtonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.secondary
@@ -115,7 +113,7 @@ private fun CatFactsScreenPreview() {
     CatFactsTheme(darkTheme = false) {
         CatFactsScreenUi(
             listOf(CatFact(0, "Hello, Kitty!", "") to rememberSwipeableCardState(0)),
-            {}
+            {}, {}
         )
     }
 }

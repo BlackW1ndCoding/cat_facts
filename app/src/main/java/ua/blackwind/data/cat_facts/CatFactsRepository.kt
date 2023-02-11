@@ -53,6 +53,10 @@ class CatFactsRepository @Inject constructor(
         dao.insertCurrentRandomFactId(CurrentRandomCatFactId(id = id))
     }
 
+    override suspend fun insertFavoriteCard(fact: FavoriteCatFactDBModel) {
+        dao.insertFavoriteCatFact(fact)
+    }
+
     override fun getLastRandomFactId(): Flow<Int> =
         dao.getLastLoadedRandomFactId().map { it ?: DEFAULT_ID }
 

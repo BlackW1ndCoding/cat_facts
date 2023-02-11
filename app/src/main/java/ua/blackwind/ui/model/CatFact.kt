@@ -14,3 +14,6 @@ fun RandomCatFactDbModel.toCatFact() =
 
 fun FavoriteCatFactDBModel.toCatFact() =
     CatFact(this.id, this.text, this.imageUrl)
+
+fun CatFact.toFavoriteFactDbModel() =
+    FavoriteCatFactDBModel(this.id, this.text, this.imgUrl)

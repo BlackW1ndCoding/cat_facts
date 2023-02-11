@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import ua.blackwind.data.cat_facts.CatFactsRepository
 import ua.blackwind.ui.model.CatFact
 import ua.blackwind.ui.model.toCatFact
+import ua.blackwind.ui.model.toFavoriteFactDbModel
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,8 +20,10 @@ class RandomCatFactsViewModel @Inject constructor(
 
     private val _facts = MutableStateFlow<List<CatFact>>(emptyList())
     val facts: StateFlow<List<CatFact>> = _facts
+    private var currentCatFact: CatFact? = null
 
     init {
+        //TODO add possibility to get and update current fact by id
         //TODO Investigate UI freezes
         viewModelScope.launch(IO) {
             factsRepository.getCurrentRandomFactId()
@@ -32,6 +35,7 @@ class RandomCatFactsViewModel @Inject constructor(
 
                     val current = pair.first
                     val last = pair.second
+                    //currentCatFact = factsRepository.get
 
                     if (_facts.value.isEmpty() || current == _facts.value.last().id) {
                         _facts.update {
@@ -45,11 +49,23 @@ class RandomCatFactsViewModel @Inject constructor(
         }
     }
 
+    fun onFavoriteClick() {
+        currentCatFact?.let { fact ->
+            viewModelScope.launch {
+                factsRepository.insertFavoriteCard(
+                    fact.toFavoriteFactDbModel()
+                )
+            }
+
+        }
+    }
+
     fun onSwipe(catFact: CatFact) {
         Log.d(
             "SWIPE",
             "swiped fact with id ${catFact.id} facts last id is ${_facts.value.last().id}"
         )
+        currentCatFact = catFact
         viewModelScope.launch { factsRepository.insertCurrentRandomFactId(catFact.id + 1) }
     }
 
