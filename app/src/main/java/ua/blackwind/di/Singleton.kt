@@ -15,6 +15,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import ua.blackwind.data.cat_facts.CatFactsRemoteDataSource
 import ua.blackwind.data.cat_facts.ICatFactsRemoteDataSource
+import ua.blackwind.data.cat_images.CatImagesRemoteDataSource
+import ua.blackwind.data.cat_images.ICatImagesRemoteDataSource
 import ua.blackwind.data.db.CatFactsDatabase
 import javax.inject.Singleton
 
@@ -51,6 +53,12 @@ object SingletonProvides {
     @Provides
     fun provideCatFactsRemoteDataSource(requestQueue: RequestQueue): ICatFactsRemoteDataSource {
         return CatFactsRemoteDataSource(requestQueue)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCatImagesRemoteDataSource(requestQueue: RequestQueue): ICatImagesRemoteDataSource{
+        return CatImagesRemoteDataSource(requestQueue)
     }
 
 }

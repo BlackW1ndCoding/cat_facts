@@ -1,4 +1,4 @@
-package ua.blackwind.data
+package ua.blackwind.data.cat_images
 
 import kotlinx.coroutines.flow.Flow
 import ua.blackwind.data.db.model.CatImageDbModel
