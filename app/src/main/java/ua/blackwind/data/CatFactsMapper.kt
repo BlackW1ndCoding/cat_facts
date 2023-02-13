@@ -5,6 +5,6 @@ import ua.blackwind.data.db.model.RandomCatFactDbModel
 
 fun CatFactJSON.mapToDbModel() =
     RandomCatFactDbModel(
-        id = null,
+        id = 0,
         text = text
     )
