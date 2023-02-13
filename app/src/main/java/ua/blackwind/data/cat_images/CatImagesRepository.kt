@@ -1,16 +1,30 @@
 package ua.blackwind.data.cat_images
 
+import android.util.Log
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapter
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import org.json.JSONArray
+import ua.blackwind.data.api.CatImageJson
+import ua.blackwind.data.api.toDbModel
 import ua.blackwind.data.db.CatFactsDatabase
 import ua.blackwind.data.db.model.CatImageDbModel
+import ua.blackwind.di.ApplicationScope
+import ua.blackwind.di.IoDispatcher
 import javax.inject.Inject
 
 class CatImagesRepository @Inject constructor(
-    db: CatFactsDatabase,
-    remoteDataSource: ICatImagesRemoteDataSource
+    @ApplicationScope private val applicationScope: CoroutineScope,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher,
+    private val db: CatFactsDatabase,
+    private val remoteDataSource: ICatImagesRemoteDataSource,
+    private val moshi: Moshi
 ): ICatImagesRepository {
     override fun getAllCatImagesList(): Flow<List<CatImageDbModel>> {
-        TODO("Not yet implemented")
+        return db.dao.getAllCatImages()
     }
 
     override fun deleteCatImageById(id: Int) {
@@ -18,6 +32,33 @@ class CatImagesRepository @Inject constructor(
     }
 
     override fun fetchMoreCatImages() {
-        TODO("Not yet implemented")
+        remoteDataSource.loadNewCatImages(
+            ::successCallBack,
+            ::errorCallBack
+        )
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun successCallBack(jsonArray: JSONArray) {
+        val adapter = moshi.adapter<List<CatImageJson>>()
+        try {
+            adapter.fromJson(jsonArray.toString())?.let { jsonList ->
+                jsonList.filter { it.url.takeLast(3) != GIF_IMAGE_FILE_EXTENSION }
+                    .map { it.toDbModel() }.also { imageList ->
+                        applicationScope.launch(dispatcher) { db.dao.insertCatImageList(imageList) }
+                    }
+            }
+        } catch (exception: Exception) {
+            fetchMoreCatImages()
+        }
+
+    }
+
+    private fun errorCallBack(exception: Exception) {
+        Log.d("IMAGES", exception.message ?: "Unknown error")
+    }
+
+    companion object {
+        private const val GIF_IMAGE_FILE_EXTENSION = "gif"
     }
 }

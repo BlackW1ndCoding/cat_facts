@@ -7,5 +7,7 @@ import androidx.room.PrimaryKey
 data class CatImageDbModel(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
-    val url: String
+    val url: String,
+    val width: Int,
+    val height: Int
 )

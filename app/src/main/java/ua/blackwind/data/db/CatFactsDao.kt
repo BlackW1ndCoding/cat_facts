@@ -23,7 +23,7 @@ interface CatFactsDao {
     suspend fun insertFavoriteCatFact(fact: FavoriteCatFactDBModel)
 
     @Insert
-    suspend fun insertCatImage(catImage: CatImageDbModel)
+    suspend fun insertCatImageList(list: List<CatImageDbModel>)
 
     @Query("DELETE FROM facts_random WHERE id == :id")
     suspend fun deleteRandomCatFactById(id: Int)
