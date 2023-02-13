@@ -9,6 +9,7 @@ buildscript {
         nav_version = '1.8.33-beta'
         compose_hilt_navigation_version = '1.0.0'
         mockkVersion = '1.13.4'
+        coil_version = '2.2.2'
     }
 
     dependencies {

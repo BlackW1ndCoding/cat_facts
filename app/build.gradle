@@ -96,6 +96,8 @@ dependencies {
     //swipeable cards
     implementation 'com.alexstyl.swipeablecard:swipeablecard:0.1.0'
 
+    implementation "io.coil-kt:coil:$coil_version"
+
     testImplementation 'junit:junit:4.13.2'
     testImplementation "io.mockk:mockk:${mockkVersion}"
 
