@@ -60,13 +60,6 @@ class CatFactsRepository @Inject constructor(
     override fun getLastRandomFactId(): Flow<Int> =
         dao.getLastLoadedRandomFactId().map { it ?: DEFAULT_ID }
 
-    override suspend fun getRandomFactsListByIdRange(
-        first: Int,
-        last: Int
-    ): List<RandomCatFactDbModel> {
-        return dao.getRandomCatFactsByIdRange(first, last)
-    }
-
     override fun getAllRandomCatFacts(): Flow<List<RandomCatFactDbModel>> =
         dao.getAllRandomCatFacts()
 

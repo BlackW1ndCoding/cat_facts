@@ -19,7 +19,7 @@ interface CatFactsDao {
     @Insert
     suspend fun insertRandomCatFactsList(list: List<RandomCatFactDbModel>)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFavoriteCatFact(fact: FavoriteCatFactDBModel)
 
     @Insert

@@ -46,7 +46,7 @@ fun FavoriteFactsListScreenUi(list: List<CatFact>) {
                 .fillMaxWidth()
                 .height(15.dp)
         )
-        Surface() {
+        Surface(color = MaterialTheme.colorScheme.primary) {
             LazyColumn {
                 items(list.size) { index ->
                     FavoriteFactListItem(catFact = list[index])

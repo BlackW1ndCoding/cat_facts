@@ -1,10 +1,13 @@
 package ua.blackwind.ui.screens.favorite_facts
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,6 +23,7 @@ import ua.blackwind.ui.model.CatFact
 fun FavoriteFactListItem(catFact: CatFact) {
     Card(
         shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary),
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(40.dp, Dp.Unspecified)

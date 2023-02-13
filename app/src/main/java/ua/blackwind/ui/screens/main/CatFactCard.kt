@@ -2,7 +2,9 @@ package ua.blackwind.ui.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,12 +33,7 @@ fun CatFactCard(
         modifier = Modifier
             .swipableCard(
                 state = state,
-                onSwiped = { onSwipe(catFact) },
-                {},
-                listOf(
-                    com.alexstyl.swipeablecard.Direction.Up,
-                    com.alexstyl.swipeablecard.Direction.Down
-                )
+                onSwiped = { onSwipe(catFact) }
             )
     ) {
         BoxWithConstraints(
@@ -56,7 +53,7 @@ fun CatFactCard(
                 modifier = Modifier
                     .align(alignment = Alignment.TopCenter)
                     .width(boxWidth)
-                    .height(boxHeight * 0.7f)
+                    .height(boxHeight * .7f)
             ) {
                 Text(text = "THIS IS SPARTA!!!!")
             }
@@ -69,14 +66,27 @@ fun CatFactCard(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .width(boxWidth)
-                    .defaultMinSize(minHeight = boxHeight * 0.4f)
+                    .heightIn(boxHeight * .4f, boxHeight * .6f)
             ) {
-                Text(
-                    text = catFact.text,
-                    fontSize = 18.sp,
-                    fontStyle = FontStyle.Italic,
-                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 30.dp)
-                )
+                Column() {
+                    Text(
+                        text = catFact.text,
+                        fontSize = 18.sp,
+                        fontStyle = FontStyle.Italic,
+                        modifier = Modifier
+                            .sizeIn(
+                                minHeight = boxHeight * .4f - 55.dp,
+                                maxHeight = boxHeight * .6f - 55.dp
+                            )
+                            .padding(horizontal = 20.dp, vertical = 30.dp)
+                            .verticalScroll(rememberScrollState())
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(55.dp)
+                    )
+                }
             }
         }
     }
