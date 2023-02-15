@@ -7,7 +7,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ua.blackwind.data.cat_facts.CatFactsRepository
 import ua.blackwind.data.cat_facts.ICatFactsRepository
 import ua.blackwind.data.cat_images.ICatImagesRepository
 import ua.blackwind.ui.model.CatFact
@@ -26,8 +25,8 @@ class RandomCatFactsViewModel @Inject constructor(
     private var currentCatFactId: Int = 0
 
     init {
-        //TODO add possibility to get and update current fact by id
         //TODO Investigate UI freezes
+        //TODO optimize card loading for smoother user experience
         viewModelScope.launch(IO) {
             val currentRandomFactIdFlow = factsRepository.getCurrentRandomFactId()
             val lastRandomFactIdFlow = factsRepository.getLastRandomFactId()

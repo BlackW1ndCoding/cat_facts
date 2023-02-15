@@ -20,8 +20,8 @@ import com.alexstyl.swipeablecard.SwipeableCardState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ua.blackwind.R
-import ua.blackwind.ui.compose.CatFactCard
-import ua.blackwind.ui.compose.CatFactCardNoMoreFacts
+import ua.blackwind.ui.screens.main.CatFactCard
+import ua.blackwind.ui.screens.main.CatFactCardNoMoreFacts
 import ua.blackwind.ui.model.CatFact
 import ua.blackwind.ui.theme.CatFactsTheme
 
