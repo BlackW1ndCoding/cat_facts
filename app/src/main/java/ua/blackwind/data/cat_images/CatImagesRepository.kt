@@ -34,7 +34,6 @@ class CatImagesRepository @Inject constructor(
                     Pair(lastId, imageList)
                 }.collectLatest { (id, list) ->
                     try {
-                        Log.d("IMAGE", "Last fact id $id and last cat image ${list.last().id}")
                         if (list.last().id < (id ?: 1)) {
                             fetchMoreCatImages()
                         }
