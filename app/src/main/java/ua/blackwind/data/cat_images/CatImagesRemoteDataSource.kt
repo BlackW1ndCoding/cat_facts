@@ -4,8 +4,9 @@ import com.android.volley.Request.Method
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
 import org.json.JSONArray
+import javax.inject.Inject
 
-class CatImagesRemoteDataSource(private val requestQueue: RequestQueue):
+class CatImagesRemoteDataSource @Inject constructor(private val requestQueue: RequestQueue):
     ICatImagesRemoteDataSource {
     override fun loadNewCatImages(
         successCallback: (JSONArray) -> Unit,

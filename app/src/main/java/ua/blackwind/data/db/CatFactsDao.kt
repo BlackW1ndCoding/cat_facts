@@ -40,7 +40,7 @@ interface CatFactsDao {
     @Query("SELECT * FROM facts_favorite ORDER BY id ASC")
     fun getAllFavoriteCatFacts(): Flow<List<FavoriteCatFactDBModel>>
 
-    @Query("SELECT * FROM cat_image ORDER BY id DESC")
+    @Query("SELECT * FROM cat_image ORDER BY id ASC")
     fun getAllCatImages(): Flow<List<CatImageDbModel>>
 
     @Query("SELECT COUNT(id) FROM facts_random")

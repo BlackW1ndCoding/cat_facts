@@ -49,16 +49,6 @@ object SingletonProvides {
     @Provides
     fun provideRequestQueue(@ApplicationContext context: Context) = Volley.newRequestQueue(context)
 
-    @Singleton
-    @Provides
-    fun provideCatFactsRemoteDataSource(requestQueue: RequestQueue): ICatFactsRemoteDataSource {
-        return CatFactsRemoteDataSource(requestQueue)
-    }
 
-    @Singleton
-    @Provides
-    fun provideCatImagesRemoteDataSource(requestQueue: RequestQueue): ICatImagesRemoteDataSource{
-        return CatImagesRemoteDataSource(requestQueue)
-    }
 
 }

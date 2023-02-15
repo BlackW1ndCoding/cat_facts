@@ -8,6 +8,8 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ua.blackwind.data.cat_facts.CatFactsRepository
+import ua.blackwind.data.cat_facts.ICatFactsRepository
+import ua.blackwind.data.cat_images.ICatImagesRepository
 import ua.blackwind.ui.model.CatFact
 import ua.blackwind.ui.model.toCatFact
 import ua.blackwind.ui.model.toFavoriteFactDbModel
@@ -15,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RandomCatFactsViewModel @Inject constructor(
-    private val factsRepository: CatFactsRepository
+    private val factsRepository: ICatFactsRepository,
+    private val imagesRepository: ICatImagesRepository
 ): ViewModel() {
 
     private val _facts = MutableStateFlow<List<CatFact>>(emptyList())

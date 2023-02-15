@@ -6,6 +6,8 @@ import com.squareup.moshi.adapter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import ua.blackwind.data.api.CatImageJson
@@ -23,6 +25,26 @@ class CatImagesRepository @Inject constructor(
     private val remoteDataSource: ICatImagesRemoteDataSource,
     private val moshi: Moshi
 ): ICatImagesRepository {
+
+    init {
+        applicationScope.launch(dispatcher) {
+            db.dao.getLastLoadedRandomFactId()
+                .combine(db.dao.getCurrentRandomFactId()) { last, _ -> last }
+                .combine(db.dao.getAllCatImages()) { lastId, imageList ->
+                    Pair(lastId, imageList)
+                }.collectLatest { (id, list) ->
+                    try {
+                        Log.d("IMAGE", "Last fact id $id and last cat image ${list.last().id}")
+                        if (list.last().id < (id ?: 1)) {
+                            fetchMoreCatImages()
+                        }
+                    } catch (e: NoSuchElementException) {
+                        fetchMoreCatImages()
+                    }
+                }
+        }
+    }
+
     override fun getAllCatImagesList(): Flow<List<CatImageDbModel>> {
         return db.dao.getAllCatImages()
     }
@@ -32,6 +54,7 @@ class CatImagesRepository @Inject constructor(
     }
 
     override fun fetchMoreCatImages() {
+        Log.d("IMAGE", "Fetching more images")
         remoteDataSource.loadNewCatImages(
             ::successCallBack,
             ::errorCallBack
@@ -51,7 +74,6 @@ class CatImagesRepository @Inject constructor(
         } catch (exception: Exception) {
             fetchMoreCatImages()
         }
-
     }
 
     private fun errorCallBack(exception: Exception) {
