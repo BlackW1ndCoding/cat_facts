@@ -53,7 +53,6 @@ class CatImagesRepository @Inject constructor(
     }
 
     override fun fetchMoreCatImages() {
-        Log.d("IMAGE", "Fetching more images")
         remoteDataSource.loadNewCatImages(
             ::successCallBack,
             ::errorCallBack

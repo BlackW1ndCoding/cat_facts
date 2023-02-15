@@ -9,8 +9,8 @@ data class CatFact(
     val imgUrl: String
 )
 
-fun RandomCatFactDbModel.toCatFact() =
-    CatFact(this.id, this.text, "")
+fun RandomCatFactDbModel.toCatFact(image: String) =
+    CatFact(this.id, this.text, image)
 
 fun FavoriteCatFactDBModel.toCatFact() =
     CatFact(this.id, this.text, this.imageUrl)

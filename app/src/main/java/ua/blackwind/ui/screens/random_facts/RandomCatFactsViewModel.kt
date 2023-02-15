@@ -29,26 +29,40 @@ class RandomCatFactsViewModel @Inject constructor(
         //TODO add possibility to get and update current fact by id
         //TODO Investigate UI freezes
         viewModelScope.launch(IO) {
-            factsRepository.getCurrentRandomFactId()
-                .combine(factsRepository.getLastRandomFactId()) { current, last ->
-                    Pair(current, last)
-                }.combine(factsRepository.getAllRandomCatFacts()) { pair, list ->
-                    Pair(pair, list)
-                }.collectLatest { (pair, list) ->
+            val currentRandomFactIdFlow = factsRepository.getCurrentRandomFactId()
+            val lastRandomFactIdFlow = factsRepository.getLastRandomFactId()
+            val allRandomFactsFlow = factsRepository.getAllRandomCatFacts()
+            val allCatImagesFlow = imagesRepository.getAllCatImagesList()
+            combine(
+                currentRandomFactIdFlow,
+                lastRandomFactIdFlow,
+                allRandomFactsFlow,
+                allCatImagesFlow
+            ) { current, last, facts, images ->
+                Pair(
+                    Pair(current, last), Pair(facts, images)
+                )
+            }.collectLatest { (ids, lists) ->
+                val current = ids.first
+                val last = ids.second
+                val factsList = lists.first
+                val imageList = lists.second
 
-                    val current = pair.first
-                    val last = pair.second
-                    currentCatFactId = current
+                currentCatFactId = current
 
-                    if (_facts.value.isEmpty() || current == _facts.value.last().id) {
-                        _facts.update {
-                            val update = list.filter { fact ->
-                                fact.id in current..if (last - current > 10) current + 10 else last
-                            }.map { it.toCatFact() }
-                            update
+                if (_facts.value.isEmpty() || current == _facts.value.last().id) {
+                    _facts.update {
+                        val update = factsList.filter { fact ->
+                            fact.id in current..if (last - current > 10) current + 10 else last
+                        }.map { factModel ->
+                            factModel.toCatFact(
+                                imageList.find { image -> image.id == factModel.id }?.url ?: ""
+                            )
                         }
+                        update
                     }
                 }
+            }
         }
     }
 
